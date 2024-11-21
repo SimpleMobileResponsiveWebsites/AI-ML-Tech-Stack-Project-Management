@@ -60,11 +60,6 @@ if not filtered_tasks.empty:
 else:
     st.write("No tasks available for the selected filter.")
 
-# Visualization
-st.header("Framework Utilization")
-framework_counts = st.session_state.tasks["Framework"].value_counts()
-st.bar_chart(framework_counts)
-
 # Notes Section
 st.header("Project Notes")
 project_notes = st.text_area("Document your thoughts or ideas here.", "")
