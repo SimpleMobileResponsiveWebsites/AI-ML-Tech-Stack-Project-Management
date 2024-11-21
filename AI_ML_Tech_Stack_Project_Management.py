@@ -49,16 +49,19 @@ if submitted and task_name:
 
 # Display Tasks
 st.header("Task Overview")
-filtered_tasks = (
-    st.session_state.tasks
-    if task_filter == "All"
-    else st.session_state.tasks[st.session_state.tasks["Status"] == task_filter]
-)
+
+# Filter tasks based on the selected task filter
+if task_filter == "All":
+    filtered_tasks = st.session_state.tasks
+else:
+    filtered_tasks = st.session_state.tasks[
+        st.session_state.tasks["Status"].str.contains(task_filter, case=False, na=False)
+    ]
 
 if not filtered_tasks.empty:
     st.dataframe(filtered_tasks, use_container_width=True)
 else:
-    st.write("No tasks available for the selected filter.")
+    st.write(f"No tasks available for the filter: {task_filter}.")
 
 # Notes Section
 st.header("Project Notes")
