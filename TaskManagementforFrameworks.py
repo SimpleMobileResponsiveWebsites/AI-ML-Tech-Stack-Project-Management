@@ -5,8 +5,9 @@ from datetime import datetime
 # Sample data as a DataFrame
 data = {
     "Framework": [
-        "PyTorch", "TensorFlow", "Scikit-learn", "XGBoost", "Hugging Face Transformers",
-        "LangChain", "NumPy", "Pandas", "Matplotlib", "Seaborn"
+        "PyTorch", "TensorFlow", "Scikit-learn", "XGBoost",
+        "Hugging Face Transformers", "LangChain",
+        "NumPy", "Pandas", "Matplotlib", "Seaborn"
     ],
     "Task": ["setup development environment"] * 10,
     "Status": ["Pending"] * 10,
@@ -18,12 +19,20 @@ data = {
 tasks_df = pd.DataFrame(data)
 
 # Page Configuration
-st.set_page_config(page_title="Task Management for Frameworks", layout="wide")
+st.set_page_config(page_title="AI/ML Project Management", layout="wide")
 
 # Sidebar Filters
 st.sidebar.header("Task Filters")
 framework_filter = st.sidebar.multiselect("Filter by Framework", options=tasks_df["Framework"].unique())
 status_filter = st.sidebar.multiselect("Filter by Status", options=tasks_df["Status"].unique())
+st.sidebar.write("---")
+st.sidebar.header("Quick Actions")
+reset_data = st.sidebar.button("Reset Data")
+
+# Handle Reset Data
+if reset_data:
+    tasks_df = pd.DataFrame(data)
+    st.success("Data has been reset.")
 
 # Filter DataFrame based on Sidebar Inputs
 filtered_df = tasks_df
@@ -33,9 +42,9 @@ if status_filter:
     filtered_df = filtered_df[filtered_df["Status"].isin(status_filter)]
 
 # Main Page
-st.title("Framework Task Management")
+st.title("AI/ML Tech Stack Project Management")
 
-# Display tasks
+# Display Tasks
 st.header("Tasks Overview")
 if not filtered_df.empty:
     for idx, row in filtered_df.iterrows():
@@ -43,7 +52,7 @@ if not filtered_df.empty:
             st.write(f"**Status:** {row['Status']}")
             st.write(f"**Due Date:** {row['Due Date']}")
             st.write(f"**Notes:** {row['Notes']}")
-            
+
             # Update task status
             new_status = st.selectbox(
                 "Update Status",
@@ -67,7 +76,7 @@ with st.form("add_task_form"):
     notes = st.text_area("Notes", "")
     submitted = st.form_submit_button("Add Task")
 
-if submitted:
+if submitted and task_name:
     new_task = {
         "Framework": framework,
         "Task": task_name,
@@ -77,6 +86,14 @@ if submitted:
     }
     tasks_df = pd.concat([tasks_df, pd.DataFrame([new_task])], ignore_index=True)
     st.success("New task added successfully!")
+
+# Notes Section
+st.header("Project Notes")
+project_notes = st.text_area("Document your thoughts or ideas here.", "")
+if st.button("Save Notes"):
+    with open("project_notes.txt", "a") as f:
+        f.write(f"\n[{datetime.now()}]\n{project_notes}\n")
+    st.success("Notes saved successfully!")
 
 # Save Data
 st.download_button(
